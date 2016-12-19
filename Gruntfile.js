@@ -12,7 +12,7 @@ module.exports = function(grunt) {
             dist: {
                 src: 'dist'
             },
-            nonDist: ['dist/**/*.js', 'dist/**/*.css', '!dist/**/*.min.js', '!dist/**/*.min.css']
+            nonDistFiles: ['dist/**/*.js', 'dist/**/*.css', '!dist/**/*.min.js', '!dist/**/*.min.css']
         },
         useminPrepare: {
             html: 'dist/**/*.html'
@@ -40,13 +40,47 @@ module.exports = function(grunt) {
             minifiedFiles: {
                 src: ['dist/js/**/*.min.js', 'dist/css/**/*.min.css']
             }
+        },
+        coffee: {
+            compile: {
+                expand: true,
+                cwd: 'public/coffee',
+                src: ['**/*.coffee'],
+                dest: 'public/js',
+                ext: '.js'
+            }
+        },
+        less: {
+            compile: {
+                expand: true,
+                cwd: 'public/less',
+                src: ['**/*.less'],
+                dest: 'public/css',
+                ext: '.css'
+            }
+        },
+        watch: {
+            coffee: {
+                options: {
+                    event: ['added', 'changed']
+                },
+                files: 'public/coffee/**/*.coffee',
+                tasks: 'coffee:compile'
+            },
+            less: {
+                options: {
+                    event: ['added', 'changed']
+                },
+                files: 'public/less/**/*.less',
+                tasks: 'less:compile'
+            }
         }
     });
 
-    grunt.registerTask('dist', ['clean', 'copy']);
+    grunt.registerTask('dist', ['clean:dist', 'copy']);
     grunt.registerTask('min', ['useminPrepare', 'concat:generated', 'uglify:generated', 'cssmin:generated', 
         'rev:images', 'rev:minifiedFiles', 'usemin', 'imagemin']);
-    grunt.registerTask('default', ['dist', 'min', 'clean:nonDist']);
+    grunt.registerTask('default', ['dist', 'min', 'clean:nonDistFiles']);
 
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-clean');
@@ -54,6 +88,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-imagemin');
+    grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-coffee');
+    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-rev');
     grunt.loadNpmTasks('grunt-usemin');
 }
