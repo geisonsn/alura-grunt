@@ -86,12 +86,26 @@ module.exports = function(grunt) {
             js: {
                 src: ['public/js/**/*.js']
             }
+        },
+        browserSync: {
+            public: {
+                bsFiles: {
+                    src: ['public/**/*']
+                },
+                options: {
+                    watchTask: true,
+                    server: {
+                        baseDir: 'public'
+                    }
+                }
+            }
         }
     });
 
     grunt.registerTask('dist', ['clean:dist', 'copy']);
     grunt.registerTask('min', ['useminPrepare', 'concat:generated', 'uglify:generated', 'cssmin:generated', 
         'rev:images', 'rev:minifiedFiles', 'usemin', 'imagemin']);
+    grunt.registerTask('server', ['browserSync', 'watch']);
     grunt.registerTask('default', ['dist', 'min', 'clean:nonDistFiles']);
 
     grunt.loadNpmTasks('grunt-contrib-copy');
@@ -106,4 +120,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-rev');
     grunt.loadNpmTasks('grunt-usemin');
+    grunt.loadNpmTasks('grunt-browser-sync');
 }
